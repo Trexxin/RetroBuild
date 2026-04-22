@@ -1,0 +1,37 @@
+<section class="page">
+  <header class="page-header">
+    <h1>Build Plans</h1>
+    <a routerLink="/plans/new" class="btn-primary">+ New Plan</a>
+  </header>
+
+  @if (loading()) {
+    <p>Loading plans...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (plans().length === 0) {
+    <div class="empty-state">
+      <p>No build plans yet.</p>
+      <p>Create one to start analyzing purchase paths for your champion.</p>
+    </div>
+  } @else {
+    <ul class="plan-list">
+      @for (plan of plans(); track plan.plan_id) {
+        <li class="plan-card">
+          <a [routerLink]="['/plans', plan.plan_id]" class="plan-link">
+            <div class="plan-info">
+              <div class="plan-name">{{ plan.name }}</div>
+              @if (plan.notes) {
+                <div class="plan-notes">{{ plan.notes }}</div>
+              }
+              <div class="plan-meta">
+                {{ plan.target_count }} target{{ plan.target_count === 1 ? '' : 's' }}
+                · Created {{ plan.created_at | date:'mediumDate' }}
+              </div>
+            </div>
+          </a>
+          <button class="btn-delete" (click)="onDelete(plan, $event)">Delete</button>
+        </li>
+      }
+    </ul>
+  }
+</section>

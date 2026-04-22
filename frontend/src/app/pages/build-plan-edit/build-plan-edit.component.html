@@ -1,0 +1,108 @@
+<section class="page">
+  <a routerLink="/plans" class="back-link">&larr; Back to plans</a>
+
+  <h1>{{ isEdit() ? 'Edit Plan' : 'New Plan' }}</h1>
+
+  @if (loading()) {
+    <p>Loading plan...</p>
+  } @else {
+    <form class="plan-form" (ngSubmit)="save()">
+      <label>
+        <span class="label-text">Plan name *</span>
+        <input
+          type="text"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          name="name"
+          placeholder="e.g. Riven Bruiser Setup"
+          maxlength="100"
+          required
+        />
+      </label>
+
+      <label>
+        <span class="label-text">Notes (optional)</span>
+        <textarea
+          [ngModel]="notes()"
+          (ngModelChange)="notes.set($event)"
+          name="notes"
+          rows="3"
+          placeholder="When to use this build, matchup notes, etc."
+        ></textarea>
+      </label>
+
+      <div class="targets-section">
+        <span class="label-text">Target items *</span>
+
+        @if (targets().length === 0) {
+          <p class="empty-targets">No targets yet. Search below to add items.</p>
+        } @else {
+          <ul class="target-list">
+            @for (t of targets(); track t.item_id) {
+              <li class="target-chip">
+                @if (t.icon_url) {
+                  <img [src]="t.icon_url" [alt]="t.name" class="chip-icon" />
+                }
+                <span class="chip-name">{{ t.name }}</span>
+                <span class="chip-cost">{{ t.total_cost }}g</span>
+                <button
+                  type="button"
+                  class="chip-remove"
+                  (click)="removeTarget(t.item_id)"
+                  aria-label="Remove target"
+                >
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+        }
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Search items to add..."
+            [ngModel]="searchText()"
+            (ngModelChange)="searchText.set($event); onSearch()"
+            name="search"
+          />
+          @if (searchResults().length > 0) {
+            <ul class="search-results">
+              @for (result of searchResults(); track result.item_id) {
+                <li>
+                  <button
+                    type="button"
+                    class="result-btn"
+                    (click)="addTarget(result)"
+                  >
+                    @if (result.icon_url) {
+                      <img [src]="result.icon_url" [alt]="result.name" class="result-icon" />
+                    }
+                    <span class="result-name">{{ result.name }}</span>
+                    <span class="result-cost">{{ result.total_cost }}g</span>
+                    <span class="result-add">+ Add</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <a routerLink="/plans" class="btn-secondary">Cancel</a>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="!canSave()"
+        >
+          {{ saving() ? 'Saving...' : (isEdit() ? 'Save Changes' : 'Create Plan') }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
