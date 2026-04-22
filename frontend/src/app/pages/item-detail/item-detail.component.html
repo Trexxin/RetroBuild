@@ -1,0 +1,73 @@
+<section class="page">
+  <a routerLink="/items" class="back-link">&larr; Back to items</a>
+
+  @if (loading()) {
+    <p>Loading...</p>
+  }
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @let it = item();
+  @if (it) {
+    <header class="item-header">
+      @if (it.icon_url) {
+        <img class="icon" [src]="it.icon_url" [alt]="it.name" />
+      }
+      <div class="title-block">
+        <h1>{{ it.name }}</h1>
+        <div class="cost">{{ it.total_cost }}g</div>
+        @if (it.description) {
+          <p class="desc">{{ it.description }}</p>
+        }
+      </div>
+    </header>
+
+    <div class="recipe-sections">
+      <section class="recipe">
+        <h2>Components</h2>
+        @if (it.components.length === 0) {
+          <p class="empty">This is a basic item (no components).</p>
+        } @else {
+          <ul class="recipe-list">
+            @for (comp of it.components; track comp.item_id) {
+              <li>
+                <a [routerLink]="['/items', comp.item_id]" class="recipe-link">
+                  @if (comp.icon_url) {
+                    <img [src]="comp.icon_url" [alt]="comp.name" class="small-icon" />
+                  }
+                  <span class="name">{{ comp.name }}</span>
+                  @if (comp.qty > 1) {
+                    <span class="qty">x{{ comp.qty }}</span>
+                  }
+                  <span class="cost">{{ comp.total_cost }}g</span>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="recipe">
+        <h2>Builds Into</h2>
+        @if (it.builds_into.length === 0) {
+          <p class="empty">This is a final item (doesn't upgrade).</p>
+        } @else {
+          <ul class="recipe-list">
+            @for (parent of it.builds_into; track parent.item_id) {
+              <li>
+                <a [routerLink]="['/items', parent.item_id]" class="recipe-link">
+                  @if (parent.icon_url) {
+                    <img [src]="parent.icon_url" [alt]="parent.name" class="small-icon" />
+                  }
+                  <span class="name">{{ parent.name }}</span>
+                  <span class="cost">{{ parent.total_cost }}g</span>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</section>

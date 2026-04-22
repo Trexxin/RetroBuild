@@ -1,0 +1,28 @@
+<section class="page">
+  <h1>Item Browser</h1>
+
+  <form class="search-bar" (ngSubmit)="onSearch()">
+    <input
+      type="text"
+      placeholder="Search items by name..."
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+      name="search"
+    />
+    <button type="submit">Search</button>
+  </form>
+
+  @if (loading()) {
+    <p>Loading items...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (items().length === 0) {
+    <p>No items found.</p>
+  } @else {
+    <div class="grid">
+      @for (item of items(); track item.item_id) {
+        <app-item-card [item]="item"></app-item-card>
+      }
+    </div>
+  }
+</section>

@@ -1,0 +1,9 @@
+<a class="card" [routerLink]="['/items', item().item_id]">
+  @if (item().icon_url) {
+    <img class="icon" [src]="item().icon_url" [alt]="item().name" />
+  }
+  <div class="meta">
+    <div class="name">{{ item().name }}</div>
+    <div class="cost">{{ item().total_cost }}g</div>
+  </div>
+</a>

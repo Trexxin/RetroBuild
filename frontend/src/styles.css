@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #f4f4f5;
+  color: #1a1a1a;
+}
+
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+a {
+  color: #1f6feb;
+}
