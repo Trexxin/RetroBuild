@@ -1,0 +1,317 @@
+.hint {
+  color: #555;
+}
+
+.form-card,
+.result-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+select,
+input[type='number'],
+input[type='text'] {
+  padding: 10px 12px;
+  border: 1px solid #c0c0c0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+/* Inventory slots */
+.inventory-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  max-width: 480px;
+}
+
+.slot {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #f4f4f5;
+  border: 2px dashed #c0c0c0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.slot:hover {
+  border-color: #c8aa6e;
+  background: #fff8e8;
+}
+
+.slot.filled {
+  background: white;
+  border: 2px solid #c8aa6e;
+  border-style: solid;
+}
+
+.slot-icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.slot-empty {
+  font-size: 1.5rem;
+  color: #aaa;
+}
+
+.slot-clear {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  background: #b91c1c;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: bold;
+  line-height: 22px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Run button */
+.btn-run {
+  align-self: flex-start;
+  padding: 12px 28px;
+  background: #0b1a2b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-run:hover:not(:disabled) {
+  background: #1a2f4a;
+}
+
+.btn-run:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Result */
+.result-card h2 {
+  margin: 0 0 12px;
+  color: #c8aa6e;
+}
+
+.result-message {
+  background: #fff8e8;
+  border: 1px solid #c8aa6e;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 0;
+  color: #333;
+}
+
+.path-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.path-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0b1a2b;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.step-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-name {
+  font-weight: 600;
+}
+
+.step-cost {
+  font-size: 0.85rem;
+  color: #b08d3f;
+}
+
+.result-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.result-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-summary .label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.result-summary .value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.result-summary .positive .value {
+  color: #047857;
+}
+
+.result-summary .negative .value {
+  color: #b91c1c;
+}
+
+.error {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 0;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+}
+
+.picker-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  max-height: 50vh;
+}
+
+.picker-list li + li {
+  border-top: 1px solid #f0f0f0;
+}
+
+.picker-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.picker-result:hover {
+  background: #f4f4f5;
+}
+
+.picker-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
+
+.picker-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.picker-cost {
+  font-size: 0.85rem;
+  color: #b08d3f;
+}

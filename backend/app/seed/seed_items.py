@@ -2,7 +2,7 @@
 Seed script: fetches item data from Riot's Data Dragon API and populates
 the items and item_recipe tables.
 
-Adapted from Johnson's_Algorithm.ipynb — build_league_graph() function.
+Adapted from my Johnson's_Algorithm.ipynb — build_league_graph() function.
 
 Usage:
     cd backend

@@ -1,4 +1,148 @@
 <section class="page">
-  <h1>History</h1>
-  <p>Coming in Week 5 — revisit past analysis runs.</p>
+  <header class="page-header">
+    <h1>Analysis History</h1>
+
+    <label class="filter">
+      <span>Filter by plan:</span>
+      <select
+        [value]="selectedPlanFilter() ?? 'null'"
+        (change)="onFilterChange($any($event.target).value)"
+      >
+        <option value="null">All plans</option>
+        @for (p of plans(); track p.plan_id) {
+          <option [value]="p.plan_id">{{ p.name }}</option>
+        }
+      </select>
+    </label>
+  </header>
+
+  @if (loading()) {
+    <p>Loading history...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (runs().length === 0) {
+    <div class="empty-state">
+      <p>No analysis runs yet.</p>
+      <p>
+        <a routerLink="/analysis">Run an analysis</a> to see it here.
+      </p>
+    </div>
+  } @else {
+    <ul class="run-list">
+      @for (run of runs(); track run.run_id) {
+        <li class="run-card" [class.expanded]="expandedRunId() === run.run_id">
+          <div
+            class="run-header"
+            role="button"
+            tabindex="0"
+            (click)="toggleExpand(run.run_id)"
+            (keydown.enter)="toggleExpand(run.run_id)"
+            (keydown.space)="toggleExpand(run.run_id); $event.preventDefault()"
+          >
+            <div class="run-summary">
+              <div class="run-line-1">
+                <span class="run-date">
+                  {{ run.created_at | date:'MMM d, h:mm a' }}
+                </span>
+                <span class="run-plan">{{ run.plan_name }}</span>
+              </div>
+              <div class="run-line-2">
+                @if (run.target_item_name) {
+                  <span class="run-target">→ {{ run.target_item_name }}</span>
+                  <span class="run-cost">{{ run.total_path_cost }}g path</span>
+                } @else {
+                  <span class="run-no-path">No viable path</span>
+                }
+                <span class="run-gold">had {{ run.current_gold }}g</span>
+              </div>
+            </div>
+            <div class="run-actions">
+              <button
+                class="btn-delete"
+                (click)="onDelete(run, $event)"
+              >Delete</button>
+              <span class="chevron">
+                {{ expandedRunId() === run.run_id ? '▾' : '▸' }}
+              </span>
+            </div>
+          </div>
+
+          @if (expandedRunId() === run.run_id) {
+            <div class="run-detail">
+              @if (loadingDetail()) {
+                <p class="detail-loading">Loading detail...</p>
+              } @else {
+                @let d = expandedDetail();
+                @if (d) {
+                @if (d.message) {
+                  <p class="detail-message">{{ d.message }}</p>
+                }
+
+                <div class="detail-grid">
+                  <div class="detail-block">
+                    <h4>Inventory at run time</h4>
+                    @if (d.inventory.length === 0) {
+                      <p class="empty-line">Empty inventory</p>
+                    } @else {
+                      <ul class="inv-list">
+                        @for (item of d.inventory; track item.item_id) {
+                          <li>
+                            @if (item.icon_url) {
+                              <img [src]="item.icon_url" [alt]="item.name" />
+                            }
+                            <span>{{ item.name }}</span>
+                            <span class="cost">{{ item.total_cost }}g</span>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </div>
+
+                  <div class="detail-block">
+                    <h4>Recommended path</h4>
+                    @if (d.path_steps.length === 0) {
+                      <p class="empty-line">No path computed</p>
+                    } @else {
+                      <ol class="path-list">
+                        @for (step of d.path_steps; track step.step_num) {
+                          <li>
+                            <span class="step-num">{{ step.step_num }}</span>
+                            @if (step.icon_url) {
+                              <img [src]="step.icon_url" [alt]="step.item_name" />
+                            }
+                            <span class="step-name">{{ step.item_name }}</span>
+                            <span class="step-cost">
+                              {{ step.step_cost === 0 ? 'Already owned' : '+' + step.step_cost + 'g' }}
+                            </span>
+                          </li>
+                        }
+                      </ol>
+                    }
+                  </div>
+                </div>
+
+                @if (d.target_item) {
+                  <div class="detail-summary">
+                    <div>
+                      <span class="label">Total cost</span>
+                      <span class="value">{{ d.total_path_cost }}g</span>
+                    </div>
+                    <div>
+                      <span class="label">Gold available</span>
+                      <span class="value">{{ d.current_gold }}g</span>
+                    </div>
+                    <div [class.positive]="d.gold_remaining >= 0" [class.negative]="d.gold_remaining < 0">
+                      <span class="label">{{ d.gold_remaining >= 0 ? 'Surplus' : 'Need' }}</span>
+                      <span class="value">{{ d.gold_remaining >= 0 ? d.gold_remaining : -d.gold_remaining }}g</span>
+                    </div>
+                  </div>
+                }
+                }
+              }
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
 </section>

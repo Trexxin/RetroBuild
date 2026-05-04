@@ -9,6 +9,11 @@ import {
   BuildPlanSummary,
   BuildPlanUpdate,
 } from '../models/build-plan.model';
+import {
+  AnalysisRun,
+  AnalysisRunCreate,
+  AnalysisRunSummary,
+} from '../models/analysis.model';
 
 export interface ItemQuery {
   search?: string;
@@ -21,7 +26,7 @@ export class ApiService {
   private readonly baseUrl = 'http://localhost:8000/api';
   private readonly http = inject(HttpClient);
 
-  // ---------- Items ----------
+  // Items
 
   getItems(query: ItemQuery = {}): Observable<Item[]> {
     let params = new HttpParams();
@@ -38,7 +43,7 @@ export class ApiService {
     return this.http.get<ItemDetail>(`${this.baseUrl}/items/${itemId}`);
   }
 
-  // ---------- Build Plans ----------
+  // Build Plans
 
   getPlans(): Observable<BuildPlanSummary[]> {
     return this.http.get<BuildPlanSummary[]>(`${this.baseUrl}/plans`);
@@ -61,5 +66,33 @@ export class ApiService {
 
   deletePlan(planId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/plans/${planId}`);
+  }
+
+  // Analysis
+
+  runAnalysis(payload: AnalysisRunCreate): Observable<AnalysisRun> {
+    return this.http.post<AnalysisRun>(
+      `${this.baseUrl}/analysis/run`,
+      payload
+    );
+  }
+
+  getAnalysisHistory(planId?: number): Observable<AnalysisRunSummary[]> {
+    let params = new HttpParams();
+    if (planId !== undefined) params = params.set('plan_id', planId);
+    return this.http.get<AnalysisRunSummary[]>(
+      `${this.baseUrl}/analysis/history`,
+      { params }
+    );
+  }
+
+  getAnalysisRun(runId: number): Observable<AnalysisRun> {
+    return this.http.get<AnalysisRun>(
+      `${this.baseUrl}/analysis/history/${runId}`
+    );
+  }
+
+  deleteAnalysisRun(runId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/analysis/history/${runId}`);
   }
 }

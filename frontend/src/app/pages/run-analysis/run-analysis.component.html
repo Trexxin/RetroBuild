@@ -1,4 +1,165 @@
 <section class="page">
   <h1>Run Analysis</h1>
-  <p>Coming in Week 4 — pick a plan, enter gold + inventory, find your optimal purchase path.</p>
+
+  @if (plans().length === 0) {
+    <p class="hint">
+      You need at least one Build Plan first.
+      <a routerLink="/plans/new">Create one</a>.
+    </p>
+  } @else {
+    <div class="form-card">
+      <label class="field">
+        <span class="label-text">Build Plan</span>
+        <select
+          [ngModel]="selectedPlanId()"
+          (ngModelChange)="selectedPlanId.set($event)"
+          name="plan"
+        >
+          @for (p of plans(); track p.plan_id) {
+            <option [ngValue]="p.plan_id">
+              {{ p.name }} ({{ p.target_count }} target{{ p.target_count === 1 ? '' : 's' }})
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="label-text">Current gold</span>
+        <input
+          type="number"
+          min="0"
+          [ngModel]="currentGold()"
+          (ngModelChange)="currentGold.set($event)"
+          name="gold"
+        />
+      </label>
+
+      <div class="field">
+        <span class="label-text">Inventory ({{ occupiedSlots() }}/6)</span>
+        <div class="inventory-row">
+          @for (slot of inventory(); track $index) {
+            <button
+              type="button"
+              class="slot"
+              [class.filled]="slot !== null"
+              (click)="openPicker($index)"
+            >
+              @if (slot) {
+                @if (slot.icon_url) {
+                  <img [src]="slot.icon_url" [alt]="slot.name" class="slot-icon" />
+                }
+                <span
+                  class="slot-clear"
+                  (click)="clearSlot($index, $event)"
+                  aria-label="Clear slot"
+                >×</span>
+              } @else {
+                <span class="slot-empty">+</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <button
+        type="button"
+        class="btn-run"
+        [disabled]="!canRun()"
+        (click)="runAnalysis()"
+      >
+        {{ running() ? 'Running...' : 'Run Analysis' }}
+      </button>
+    </div>
+
+    @if (result(); as r) {
+      <div class="result-card">
+        @if (r.message) {
+          <p class="result-message">{{ r.message }}</p>
+        }
+
+        @if (r.target_item) {
+          <h2>Recommended target: {{ r.target_item.name }}</h2>
+
+          <ol class="path-list">
+            @for (step of r.path_steps; track step.step_num) {
+              <li class="path-step">
+                <div class="step-num">{{ step.step_num }}</div>
+                @if (step.icon_url) {
+                  <img [src]="step.icon_url" [alt]="step.item_name" class="step-icon" />
+                }
+                <div class="step-info">
+                  <div class="step-name">{{ step.item_name }}</div>
+                  <div class="step-cost">
+                    @if (step.step_cost === 0) {
+                      Already owned
+                    } @else {
+                      +{{ step.step_cost }}g
+                    }
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+
+          <div class="result-summary">
+            <div>
+              <span class="label">Total cost</span>
+              <span class="value">{{ r.total_path_cost }}g</span>
+            </div>
+            <div>
+              <span class="label">Your gold</span>
+              <span class="value">{{ r.current_gold }}g</span>
+            </div>
+            <div [class.positive]="r.gold_remaining >= 0" [class.negative]="r.gold_remaining < 0">
+              <span class="label">{{ r.gold_remaining >= 0 ? 'Surplus' : 'Need' }}</span>
+              <span class="value">{{ r.gold_remaining >= 0 ? r.gold_remaining : -r.gold_remaining }}g</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- Item picker modal -->
+  @if (pickerOpenForSlot() !== null) {
+    <div class="modal-backdrop" (click)="closePicker()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <h3>Pick an inventory item</h3>
+          <button class="modal-close" (click)="closePicker()">×</button>
+        </header>
+        <input
+          type="text"
+          placeholder="Search items..."
+          [ngModel]="pickerSearch()"
+          (ngModelChange)="pickerSearch.set($event); onPickerSearch()"
+          name="picker-search"
+          autofocus
+        />
+        @if (pickerResults().length > 0) {
+          <ul class="picker-list">
+            @for (item of pickerResults(); track item.item_id) {
+              <li>
+                <button
+                  type="button"
+                  class="picker-result"
+                  (click)="pickItem(item)"
+                >
+                  @if (item.icon_url) {
+                    <img [src]="item.icon_url" [alt]="item.name" class="picker-icon" />
+                  }
+                  <span class="picker-name">{{ item.name }}</span>
+                  <span class="picker-cost">{{ item.total_cost }}g</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
 </section>

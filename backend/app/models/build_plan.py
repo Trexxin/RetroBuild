@@ -16,7 +16,7 @@ class BuildPlan(Base):
     __tablename__ = "build_plans"
 
     plan_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=True)  # Optional for MVP (no auth yet)
+    user_id = Column(Integer, nullable=True)  # Will do this if I have time
     name = Column(String(100), nullable=False)
     notes = Column(Text, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
